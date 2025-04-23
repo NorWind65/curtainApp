@@ -30,7 +30,6 @@ export default function Login() {
             resizeMode= "contain"
           />
         </View>
-
         <View style= {styles.card}>
           <View style= {styles.formContainer}>
             {/* EMAIL */}
@@ -72,7 +71,6 @@ export default function Login() {
                   onChangeText = {setPassword}
                   secureTextEntry = {!showPassword}
                 />
-
                 <TouchableOpacity
                   onPress= {() => setShowPassword(!showPassword)}
                   style = {styles.eyeIcons}
@@ -97,21 +95,20 @@ export default function Login() {
                     <Text style={styles.buttonText}>Login</Text>
                   )
                 }
+            </TouchableOpacity>
+            {/* FOOTER */}
+            <View style = {styles.footer}  >
+              <Text style = {styles.footerText}>
+                Don't have an account? 
+              </Text>
+              <Link href="/signup" asChild>
+                <TouchableOpacity>
+                  <Text style = {styles.link}>
+                    Sign Up
+                  </Text>
                 </TouchableOpacity>
-
-              {/* FOOTER */}
-              <View style = {styles.footer}  >
-                <Text style = {styles.footerText}>
-                  Don't have an account? 
-                </Text>
-                <Link href="/signup" asChild>
-                  <TouchableOpacity>
-                    <Text style = {styles.link}>
-                      Sign Up
-                    </Text>
-                  </TouchableOpacity>
-                </Link>
-              </View>
+              </Link>
+            </View>
           </View>
         </View>
       </View>
