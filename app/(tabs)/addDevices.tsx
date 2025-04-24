@@ -37,7 +37,7 @@ export default function addDevices() {
                 <View style = {styles.card}>
                     {/* FORM */}
                     <View style = {styles.formContainer}>
-                        
+                
                         {/* DEVICE ID */}
                         <View style= {styles.inputGroup}>
                             <Text style = {styles.label}>Device ID</Text>
@@ -100,7 +100,7 @@ export default function addDevices() {
                                 <ActivityIndicator color ="#fff" />
                             ) : (
                                 // TEST FRONTEND - REMOVE AFTER BACKEND
-                                <Link href="/(devices)/setting" asChild> 
+                                <Link href="/(subtabs)/setting" asChild> 
                                 <Text style={styles.buttonText}>ADD DEVICES</Text>
                                 </Link>
                             )

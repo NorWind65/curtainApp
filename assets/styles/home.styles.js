@@ -123,6 +123,10 @@ const styles = StyleSheet.create({
   footerLoader: {
     marginVertical: 20,
   },
+  deleteButton: {
+    padding: 8,
+    justifyContent: "center",
+  },
 });
 
 export default styles;

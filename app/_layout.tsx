@@ -13,6 +13,12 @@ export default function RootLayout() {
           <Stack.Screen
             name ="index"
           />
+          <Stack.Screen
+            name ="(devices)"
+          />
+          <Stack.Screen
+            name ="(subtabs)"
+          />
         </Stack>
       </SafeScreen> 
       <StatusBar style="dark"/>

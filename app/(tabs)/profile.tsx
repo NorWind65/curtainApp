@@ -1,10 +1,84 @@
-import { View, Text } from 'react-native'
+import { View, Text, Image , TextInput, Platform, Alert,
+  TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, FlatList } from 'react-native'
 import React from 'react'
+import { useState, useEffect } from "react";
+import { useRouter, Link } from "expo-router";
+import styles from "../../assets/styles/profile.styles";
+import COLORS from "../../constants/colors";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function profile() {
+
+  const [user, setUser] = useState({
+    name: "Nguyễn Văn A",
+    email: "NguyenVanA@gmail.com",
+  })
+  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const router = useRouter();
+
+  // Test UI to-do fix API
+  const logout = () => {
+    router.push("/(auth)");
+  }
+
+  const confirmLogout = () => {
+    Alert.alert(
+      "Logout",
+      "Are you sure you want to logout?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        { text: "Logout", onPress: () => logout(), style: "destructive" }
+      ]
+    );
+  }
+
+
   return (
-    <View>
-      <Text>profile Page</Text>
+    <View style = {styles.container}>
+      {/* PROFILE INFO */}
+      <View style = {styles.profileHeader}>
+        <Image 
+          source = {require("../../assets/images/moon-icon.png")}
+          style = {styles.profileImage}
+        />
+        <View style = {styles.profileInfo}>
+          <Text style = {styles.username}>
+            {user.name}
+          </Text>
+          <Text style = {styles.email}>
+            {user.email}
+          </Text> 
+        </View>
+      </View>
+      {/* CHANGES INFO */}
+      <TouchableOpacity style = {styles.logoutButton} onPress = {() => router.push("/(subtabs)/changeInfo")}>
+        <Ionicons 
+          name = "key-outline"
+          size = {20}
+          color = {COLORS.white}
+          style = {styles.logoutIcon}
+        />
+        <Text style = {styles.logoutText}>
+          Change Infomation
+        </Text>
+      </TouchableOpacity>
+      {/* LOGOUT BUTTONS */}
+      <TouchableOpacity style = {styles.logoutButton} onPress = {confirmLogout}>
+        <Ionicons 
+          name = "log-out-outline"
+          size = {20}
+          color = {COLORS.white}
+          style = {styles.logoutIcon}
+        />
+        <Text style = {styles.logoutText}>
+          Logouts
+        </Text>
+      </TouchableOpacity>
     </View>
   )
 }

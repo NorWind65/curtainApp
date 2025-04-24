@@ -67,6 +67,19 @@ export default function home() {
           return "Full Open"
       }    
   }
+  const weather = (light) => {
+    if(light < 10){
+        return "Night"
+    }else if(light < 200){
+        return "Dim Weather"
+    }else if(light < 500){
+      return "Normal Weather"
+    }else if(light < 800) {
+      return "Sunny Weather"
+    }else{
+      return "Very Bright Weather"
+    }
+  }
   const renderItem = ({ item }) => (
     <Link
         href={{ pathname: "/(devices)", params: { id: item.id } }}
@@ -77,14 +90,13 @@ export default function home() {
             <View style={styles.deviceHeader}>
                 <Text >{item.name}</Text>
             </View>
-            
-           
             <View style={styles.deviceImageContainer}>
                 <Image source={statusImage(item.light)} style={styles.deviceImage} contentFit='cover'/>
             </View>
             <View style={styles.deviceDetails}>
-                <Text style={styles.deviceStatus}>Status: {state(item.percent)}  -  {item.percent}%</Text>
-                <Text style={styles.deviceLight}>Light: {item.light}</Text> 
+                <Text >Status: {state(item.percent)} - Open percent: {item.percent}%</Text>
+                <Text >Weather: {weather(item.light)}</Text>
+                <Text >Light: {item.light}</Text> 
             </View>
         </View>
       </TouchableOpacity>
@@ -100,6 +112,18 @@ export default function home() {
                 keyExtractor = {(item) => item.id.toString()}
                 contentContainerStyle = {styles.listContainer}
                 showVerticalScrollIndicator = {false}
+                ListHeaderComponent = {
+                  <View style = {styles.header}>
+                    <Text style = {styles.headerTitle}>☀️Smart Curtain☁️</Text>
+                  </View>
+                }
+                ListEmptyComponent = {
+                  <View style = {styles.emptyContainer}>
+                    <MaterialCommunityIcons name="curtains" size={70} color={COLORS.textSecondary} />
+                    <Text style = {styles.emptyText}>No Devices Found</Text>
+                    <Text style = {styles.emptySubtext}>Add your first Device Below</Text>
+                  </View>
+                }
             />
         </View>
     )

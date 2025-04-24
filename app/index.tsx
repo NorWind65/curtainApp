@@ -17,7 +17,10 @@ const index = () => {
       <Link href="/(tabs)/addDevices"> - Add Devices Page</Link>
         <Text >DEVICES</Text>
       <Link href="/(devices)"> - Devices Page</Link>
-      <Link href="/(devices)/setting"> - Settings Page</Link>
+        <Text >SUB TABS</Text>
+      <Link href="/(subtabs)/changeInfo"> - Change Info Page</Link>
+      <Link href="/(subtabs)/setting"> - Settings Page</Link>
+
     </View>
   )
 }

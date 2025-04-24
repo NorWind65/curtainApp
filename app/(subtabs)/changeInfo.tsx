@@ -1,5 +1,5 @@
 import { View, Text, Image , TextInput, Platform,
-    TouchableOpacity, ActivityIndicator, KeyboardAvoidingView } from 'react-native'
+  TouchableOpacity, ActivityIndicator, KeyboardAvoidingView } from 'react-native'
 import React from 'react'
 import { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
@@ -8,19 +8,18 @@ import COLORS from './../../constants/colors';
 import { Link } from 'expo-router';
 import { useRouter } from "expo-router";
 
-export default function signup() {
-    const [username, setUsername] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
+export default function changeInfo() {
+  const [username, setUsername] = useState("Nguyen Văn A");
+  const [email, setEmail] = useState("NguyenVanA@gmail.com");
+  const [oldPassword, setOldpassword] = useState("");
+  const [newPassword, setNewpassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-    const router = useRouter();
+  const router = useRouter();
 
-    const  handleSignUp = () => {};
-
-    return (
-        <KeyboardAvoidingView
+  return (
+    <KeyboardAvoidingView
         style = {{flex: 1}}
         behavior = {Platform.OS === "ios" ? "padding" : "height"}
         >
@@ -49,7 +48,7 @@ export default function signup() {
                                 />
                                 <TextInput 
                                 style = {styles.input}
-                                placeholder = "Ex: Nguyễn Văn A"
+                                placeholder = "Enter your new name"
                                 placeholderTextColor = {COLORS.placeholderText}
                                 value = {username}
                                 onChangeText = {setUsername}
@@ -69,7 +68,7 @@ export default function signup() {
                                 />
                                 <TextInput 
                                 style = {styles.input}
-                                placeholder = "Ex: NguyenVanA@gmail.com"
+                                placeholder = "Enter your new email"
                                 placeholderTextColor = {COLORS.placeholderText}
                                 value = {email}
                                 onChangeText = {setEmail}
@@ -78,9 +77,9 @@ export default function signup() {
                                 />
                             </View>
                         </View>
-                        {/* PASSWORD INPUT */}
+                        {/*OLD PASSWORD INPUT */}
                         <View style = {styles.inputGroup}>
-                            <Text style = {styles.label}>Password</Text>
+                            <Text style = {styles.label}>Old Password</Text>
                             <View style = {styles.inputContainer}>
                                 <Ionicons 
                                 name ='lock-closed-outline'
@@ -90,10 +89,10 @@ export default function signup() {
                                 />
                                 <TextInput 
                                 style = {styles.input}
-                                placeholder = "*******"
+                                placeholder = "*********"
                                 placeholderTextColor = {COLORS.placeholderText}
-                                value = {password}
-                                onChangeText = {setPassword}
+                                value = {oldPassword}
+                                onChangeText = {setOldpassword}
                                 secureTextEntry={!showPassword}
                                 />
                                 <TouchableOpacity
@@ -108,28 +107,58 @@ export default function signup() {
                                 </TouchableOpacity>
                             </View>
                         </View>
-                        {/* SIGNUP BUTTON */}   
+                        {/*NEW PASSWORD INPUT */}
+                        <View style = {styles.inputGroup}>
+                            <Text style = {styles.label}>New Password</Text>
+                            <View style = {styles.inputContainer}>
+                                <Ionicons 
+                                name ='lock-closed-outline'
+                                size = {20}
+                                color = {COLORS.primary}
+                                style = {styles.inputIcon}
+                                />
+                                <TextInput 
+                                style = {styles.input}
+                                placeholder = "*********"
+                                placeholderTextColor = {COLORS.placeholderText}
+                                value = {newPassword}
+                                onChangeText = {setNewpassword}
+                                secureTextEntry={!showPassword}
+                                />
+                                <TouchableOpacity
+                                    onPress= {() => setShowPassword(!showPassword)}
+                                    style = {styles.eyeIcons}
+                                    >
+                                    <Ionicons 
+                                        name={showPassword ? "eye-outline" : "eye-off-outline"}
+                                        size = {20}
+                                        color = {COLORS.primary}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        {/* Confirm BUTTON */}   
                         <TouchableOpacity
                             style = {styles.button}
-                            onPress = {handleSignUp}
+                            onPress = {() => router.push("/(tabs)/profile")}
                             disabled = {!!isLoading}  >
                             {isLoading ? (
                                 <ActivityIndicator  color = "#fff" />
                             ) : (
-                                <Text style = {styles.buttonText}>Sign Up</Text>
+                                <Text style = {styles.buttonText}>Confirm</Text>
                             )}
                         </TouchableOpacity>
-                        {/* FOOTER */}
-                        <View style = {styles.footer}>
-                            <Text style = {styles.footerText}>
-                                Already have an account? 
-                            </Text>
-                            <TouchableOpacity onPress = {() => router.back()}>
-                                <Text style = {styles.link}>
-                                    Login 
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
+                        {/* Cancel BUTTON */}   
+                        <TouchableOpacity
+                            style = {styles.button}
+                            onPress = {() => router.push("/(tabs)/profile")}
+                            disabled = {!!isLoading}  >
+                            {isLoading ? (
+                                <ActivityIndicator  color = "#fff" />
+                            ) : (
+                                <Text style = {styles.buttonText}>Cancel</Text>
+                            )}
+                        </TouchableOpacity>
                     </View>
                 </View>
             </View>
