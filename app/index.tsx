@@ -7,10 +7,17 @@ import COLORS from "../constants/colors";
 const index = () => {
   return (
     <View>
-      <Text>Home</Text>
-        
-      <Link href="/(auth)"> Login Page</Link>
-      <Link href="/(auth)/signup"> Signup Page</Link>
+      <Text>Map Sites</Text>
+        <Text>AUTH</Text>
+      <Link href="/(auth)"> - Login Page</Link>
+      <Link href="/(auth)/signup"> - Signup Page</Link>
+        <Text>TABS</Text>
+      <Link href="/(tabs)"> - Home Page</Link>
+      <Link href="/(tabs)/profile"> - Profile Page</Link>
+      <Link href="/(tabs)/addDevices"> - Add Devices Page</Link>
+        <Text >DEVICES</Text>
+      <Link href="/(devices)"> - Devices Page</Link>
+      <Link href="/(devices)/setting"> - Settings Page</Link>
     </View>
   )
 }

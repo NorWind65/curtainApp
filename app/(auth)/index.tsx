@@ -1,7 +1,7 @@
 import { View, Text, Image , TextInput, Platform,
          TouchableOpacity, ActivityIndicator, KeyboardAvoidingView } from 'react-native'
 import React from 'react'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "../../assets/styles/login.styles"
 import COLORS from './../../constants/colors';
@@ -92,7 +92,10 @@ export default function Login() {
                   {isLoading ? (
                       <ActivityIndicator color ="#fff" />
                   ) : (
-                    <Text style={styles.buttonText}>Login</Text>
+                    // TEST FRONTEND - REMOVE AFTER BACKEND
+                    <Link href="/(tabs)" asChild> 
+                      <Text style={styles.buttonText}>Login</Text>
+                    </Link>
                   )
                 }
             </TouchableOpacity>
