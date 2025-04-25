@@ -92,6 +92,11 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
     fontWeight: "600",
   },
+  settingButton:{ 
+    alignItems: 'center', 
+    marginBottom: 20 , 
+    marginTop: 20
+  },
 });
 
 export default styles;
