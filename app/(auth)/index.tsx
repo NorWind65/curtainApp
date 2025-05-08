@@ -1,4 +1,4 @@
-import { View, Text, Image , TextInput, Platform,
+import { View, Text, Image , TextInput, Platform, Alert,
          TouchableOpacity, ActivityIndicator, KeyboardAvoidingView } from 'react-native'
 import React from 'react'
 import { useState, useEffect } from "react";
@@ -6,15 +6,22 @@ import { Ionicons } from "@expo/vector-icons";
 import styles from "../../assets/styles/login.styles"
 import COLORS from './../../constants/colors';
 import { Link } from 'expo-router';
-
+import { useAuthStore } from '../../store/authStore';
 export default function Login() {
   
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  
+  const {user, isLoading, login} = useAuthStore();
 
-  const handleLogin = () => {};
+
+  const handleLogin = async () => {
+      const result = await login(email, password);
+      if (!result.success) {
+        Alert.alert("Error", result.error)
+      }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -92,10 +99,7 @@ export default function Login() {
                   {isLoading ? (
                       <ActivityIndicator color ="#fff" />
                   ) : (
-                    // TEST FRONTEND - REMOVE AFTER BACKEND
-                    <Link href="/(tabs)" asChild> 
-                      <Text style={styles.buttonText}>Login</Text>
-                    </Link>
+                    <Text style={styles.buttonText}>Login</Text>
                   )
                 }
             </TouchableOpacity>

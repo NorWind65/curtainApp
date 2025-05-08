@@ -1,4 +1,4 @@
-import { View, Text, Image , TextInput, Platform,
+import { View, Text, Image , TextInput, Platform, Alert,
     TouchableOpacity, ActivityIndicator, KeyboardAvoidingView } from 'react-native'
 import React from 'react'
 import { useState, useEffect } from "react";
@@ -7,17 +7,26 @@ import styles from "../../assets/styles/signup.styles"
 import COLORS from './../../constants/colors';
 import { Link } from 'expo-router';
 import { useRouter } from "expo-router";
+import { useAuthStore } from "../../store/authStore";
+
 
 export default function signup() {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+
+    const {user, isLoading, signup} = useAuthStore();
+
 
     const router = useRouter();
 
-    const  handleSignUp = () => {};
+    const  handleSignUp = async () => { 
+        const result = await signup(username, email, password);
+        if(!result.success) {
+            Alert.alert("Error", result.error);
+        }
+    };
 
     return (
         <KeyboardAvoidingView
