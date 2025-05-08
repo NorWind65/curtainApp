@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, AppState } from 'react-native';
 import { Link } from "expo-router";
 import React from 'react';
 import COLORS from "../constants/colors";
@@ -25,7 +25,6 @@ const index = () => {
         <Text >SUB TABS</Text>
       <Link href="/(subtabs)/changeInfo"> - Change Info Page</Link>
       <Link href="/(subtabs)/setting"> - Settings Page</Link>
-      <Text> hello {user?.email}</Text>
     </View>
   )
 }

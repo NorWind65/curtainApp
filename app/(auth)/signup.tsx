@@ -16,7 +16,7 @@ export default function signup() {
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
 
-    const {user, isLoading, signup} = useAuthStore();
+    const {user, isLoading, signup, clearStorage} = useAuthStore();
 
 
     const router = useRouter();

@@ -5,7 +5,14 @@ export const useAuthStore = create((set) => ({
     user: null,
     token: null,
     isLoading: false,
-
+    clearStorage: async () => {
+        try {
+            await AsyncStorage.clear(); 
+            set({ user: null, token: null });
+        } catch (error) {
+            console.error('Error clearing storage:', error);
+        }
+    },
     signup: async (username, email, password) => {
         set({ isLoading: true });
         try {

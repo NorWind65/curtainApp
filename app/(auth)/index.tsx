@@ -13,7 +13,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   
-  const {user, isLoading, login} = useAuthStore();
+  const {user, isLoading, login, clearStorage} = useAuthStore();
 
 
   const handleLogin = async () => {

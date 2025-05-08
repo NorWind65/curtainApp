@@ -6,7 +6,7 @@ import { useRouter, Link } from "expo-router";
 import styles from "../../assets/styles/profile.styles";
 import COLORS from "../../constants/colors";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-
+import { useAuthStore } from "../../store/authStore";
 export default function profile() {
 
   const [user, setUser] = useState({
@@ -15,11 +15,13 @@ export default function profile() {
   })
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const {clearStorage} = useAuthStore();
 
   const router = useRouter();
 
   // Test UI to-do fix API
   const logout = () => {
+    clearStorage();
     router.push("/(auth)");
   }
 
