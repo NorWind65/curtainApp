@@ -15,14 +15,14 @@ export default function profile() {
   })
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const {clearStorage} = useAuthStore();
+  const {clearStorage, logout} = useAuthStore();
 
   const router = useRouter();
 
   // Test UI to-do fix API
-  const logout = () => {
-    clearStorage();
-    router.push("/(auth)");
+  const Handlelogout = () => {
+    //clearStorage();
+    logout();
   }
 
   const confirmLogout = () => {
@@ -34,7 +34,7 @@ export default function profile() {
           text: "Cancel",
           style: "cancel"
         },
-        { text: "Logout", onPress: () => logout(), style: "destructive" }
+        { text: "Logout", onPress: () => Handlelogout(), style: "destructive" }
       ]
     );
   }
