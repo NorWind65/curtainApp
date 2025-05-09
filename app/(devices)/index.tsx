@@ -6,20 +6,17 @@ import { Ionicons } from "@expo/vector-icons";
 import styles from "../../assets/styles/device.styles"
 import COLORS from './../../constants/colors';
 import { Link } from 'expo-router';
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams ,useSegments} from "expo-router";
 import Slider from '@react-native-community/slider';
 import DateTimePicker from '@react-native-community/datetimepicker';
-
+import {useAuthStore} from "../../store/authStore"
 
 export default function DeviceRemote() {
-    const [devideID, setdevideID] = useState("");
-    const [deviceName, setdeviceName] = useState("Curtain 1");
-    const [deviceLight, setdeviceLight] = useState(0);
-    const [devicePercent, setdevicePercent] = useState(0);
+    const [device, setDevice] = useState(null);
+    const [deviceName, setdeviceName] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-
     const [sliderState ,setSliderState] = useState(0);
-
+     
     const [openTime,setOpenTime] =useState(new Date())
     const [isOpenTime,setIsOpenTime] =useState(false)
 
@@ -30,8 +27,38 @@ export default function DeviceRemote() {
 
     const[isAutoMode,setIsAutoMode] = useState(false);
 
-
+    const {deviceId} = useLocalSearchParams();
+ 
     const router = useRouter();
+    const {token} = useAuthStore();
+
+
+    const fetchDeviceID = async () => {
+        try {
+            setIsLoading(true);
+            const response = await fetch(`https://back-endcurtainapp.onrender.com/api/user/getDevice/?deviceId=${deviceId}`,{
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            })
+            const data = await response.json();
+            if(!response.ok) throw new Error(data.message|| "Failed to fetch Device");
+
+            setDevice(data);
+            setdeviceName(data?.deviceName)
+            setSliderState(data?.percent);
+        } catch (error) {
+            console.log("Error fetching Device", error);
+        } finally{
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(()=>{
+        fetchDeviceID();
+    },[deviceId])
+
 
     const toggleDatePicker = () => {
         setShowPicker(!showPicker);
@@ -104,7 +131,7 @@ export default function DeviceRemote() {
                                     value={sliderState}
                                     onValueChange={(value) => setSliderState(value)}
                                     minimumValue={0}
-                                    maximumValue={1}
+                                    maximumValue={100}
                                     minimumTrackTintColor="#fcba03"
                                     maximumTrackTintColor={COLORS.textSecondary}
                                 />

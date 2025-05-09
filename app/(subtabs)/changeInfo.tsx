@@ -7,19 +7,25 @@ import styles from "../../assets/styles/signup.styles"
 import COLORS from './../../constants/colors';
 import { Link } from 'expo-router';
 import { useRouter } from "expo-router";
+import {useAuthStore} from '../../store/authStore'
+export default function changeInfo() { 
+    
+    const {user, token} = useAuthStore();
+    
+    const [username, setUsername] = useState(user?.username||"");
+    const [email, setEmail] = useState(user?.email||"");
+    const [oldPassword, setOldpassword] = useState("");
+    const [newPassword, setNewpassword] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+   
+    
+   
 
-export default function changeInfo() {
-  const [username, setUsername] = useState("Nguyen Văn A");
-  const [email, setEmail] = useState("NguyenVanA@gmail.com");
-  const [oldPassword, setOldpassword] = useState("");
-  const [newPassword, setNewpassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+    const router = useRouter();
 
-  const router = useRouter();
-
-  return (
-    <KeyboardAvoidingView
+    return (
+        <KeyboardAvoidingView
         style = {{flex: 1}}
         behavior = {Platform.OS === "ios" ? "padding" : "height"}
         >

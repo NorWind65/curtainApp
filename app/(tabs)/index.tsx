@@ -1,48 +1,43 @@
-import { View, Text, Image , TextInput, Platform,
+import { View, Text, Image , TextInput, Platform,RefreshControl,
   TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, FlatList } from 'react-native'
 import React from 'react'
 import { useState, useEffect } from "react";
-import { useRouter, Link } from "expo-router";
+import { useRouter, Link , useSegments} from "expo-router";
 import styles from "../../assets/styles/home.styles";
 import COLORS from "../../constants/colors";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-
+import {useAuthStore} from "../../store/authStore"
 export default function home() {
     const [devices, setDevices] = useState([]);
     const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
-    const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
 
-    const fecthDevices = async () => {};
-    if(!loading){
-      setLoading(true);
-      setDevices([{
-          id: 1,
-          name: "Curtain 1",
-          percent: 0,
-          light: '900' // very bright
-      },
-      {
-          id: 2,
-          name: "Curtain 2",
-          percent: 80,
-          light: '3' // night
-      },
-      {
-          id: 3,
-          name: "Curtain 3",
-          percent: 50,
-          light: '124' // cloudy
-      },
-      {
-          id: 4,
-          name: "Curtain 4",
-          percent: 20,
-          light: '400' // sunny
-      }
-    ]);
-    }
+    const {token} = useAuthStore();
+    const fetchDevices = async (refresh = false) => {
+        try {
+          if(refresh) setRefreshing(true);
+          else setLoading(true);
+          const response = await fetch("https://back-endcurtainapp.onrender.com/api/user/getDevices",{
+            method: 'GET',
+            headers: {Authorization: `Bearer ${token}`}
+          })
+          const data = await response.json();
+          if(!response.ok) throw new Error(data.message|| "Failed to fetch Device");
+
+          setDevices(data);
+
+        } catch (error) {
+            console.log("Error fetching Device", error);
+        } finally{
+          if(refresh) setRefreshing(false);
+          else setLoading(false);
+        }
+    };
+
+
+    useEffect( () =>{
+      fetchDevices();
+    },[])
   const statusImage = (light) => {
     if(light < 10){
         return require("../../assets/images/moon-i-2.png")
@@ -82,13 +77,13 @@ export default function home() {
   }
   const renderItem = ({ item }) => (
     <Link
-        href={{ pathname: "/(devices)", params: { id: item.id } }}
+        href={{ pathname: "/(devices)", params: { deviceId: item._id } }}
         asChild
     >
       <TouchableOpacity>
         <View style={styles.deviceCard}>
             <View style={styles.deviceHeader}>
-                <Text >{item.name}</Text>
+                <Text >{item.deviceName}</Text>
             </View>
             <View style={styles.deviceImageContainer}>
                 <Image source={statusImage(item.light)} style={styles.deviceImage} contentFit='cover'/>
@@ -109,9 +104,17 @@ export default function home() {
             <FlatList
                 data = {devices}
                 renderItem = {renderItem}
-                keyExtractor = {(item) => item.id.toString()}
+                keyExtractor = {(item) => item._id}
                 contentContainerStyle = {styles.listContainer}
                 showVerticalScrollIndicator = {false}
+                refreshControl = {
+                  <RefreshControl
+                    refreshing = {refreshing}
+                    onRefresh = {() => fetchDevices(true)}
+                    colors ={[COLORS.primary]}
+                    tintColor = {COLORS.primary}
+                  />
+                }
                 ListHeaderComponent = {
                   <View style = {styles.header}>
                     <Text style = {styles.headerTitle}>☀️Smart Curtain☁️</Text>

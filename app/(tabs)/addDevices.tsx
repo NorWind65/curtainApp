@@ -1,4 +1,4 @@
-import { View, Text, Image , TextInput, Platform,
+import { View, Text, Image , TextInput, Platform, Alert,
     TouchableOpacity, ActivityIndicator, KeyboardAvoidingView } from 'react-native'
 import React from 'react'
 import { useState, useEffect } from "react";
@@ -6,18 +6,27 @@ import { useRouter, Link } from "expo-router";
 import styles from "../../assets/styles/login.styles";
 import COLORS from "../../constants/colors";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-
+import {useAuthStore} from "../../store/authStore"
 
 
 export default function addDevices() {
-    const [deviceID, setDeviceID] = useState("");
+    const [deviceId, setDeviceId] = useState("");
     const [devicePassword, setDevicePassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+
+    const { isLoading, token , addDevice} = useAuthStore();
     
     const router = useRouter();
      
-    const handleAddDevice = () => {};
+    const handleAddDevice = async() => {
+        const result = await addDevice(deviceId, devicePassword, token);
+        if (!result.success) {
+            Alert.alert("Error", result.error)
+        }
+        else {
+             Alert.alert("Add Device Successfully")
+        }
+    };
 
     return (
         <KeyboardAvoidingView
@@ -52,8 +61,8 @@ export default function addDevices() {
                                 style = {styles.input}
                                 placeholder = "Enter your deviced ID"
                                 placeholderTextColor = {COLORS.placeholderText}
-                                value = {deviceID}
-                                onChangeText = {setDeviceID}
+                                value = {deviceId}
+                                onChangeText = {setDeviceId}
                                 keyboardType = "default"
                                 autoCapitalize = "none"
                                 />
@@ -99,10 +108,7 @@ export default function addDevices() {
                             {isLoading ? (
                                 <ActivityIndicator color ="#fff" />
                             ) : (
-                                // TEST FRONTEND - REMOVE AFTER BACKEND
-                                <Link href="/(subtabs)/setting" asChild> 
                                 <Text style={styles.buttonText}>ADD DEVICES</Text>
-                                </Link>
                             )
                             }
                         </TouchableOpacity>

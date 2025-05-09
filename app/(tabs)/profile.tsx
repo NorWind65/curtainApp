@@ -8,14 +8,9 @@ import COLORS from "../../constants/colors";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useAuthStore } from "../../store/authStore";
 export default function profile() {
-
-  const [user, setUser] = useState({
-    name: "Nguyễn Văn A",
-    email: "NguyenVanA@gmail.com",
-  })
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const {clearStorage, logout} = useAuthStore();
+  const {clearStorage, logout, user} = useAuthStore();
 
   const router = useRouter();
 
@@ -49,12 +44,17 @@ export default function profile() {
           style = {styles.profileImage}
         />
         <View style = {styles.profileInfo}>
-          <Text style = {styles.username}>
-            {user.name}
-          </Text>
-          <Text style = {styles.email}>
-            {user.email}
-          </Text> 
+          {user ?
+            (<Text style = {styles.username}>
+              {user.username}
+            </Text>): <Text>ABCXYZ</Text>
+          }
+           {user ?
+            (<Text style = {styles.email}>
+              {user.email}
+            </Text> ): <Text>ABCXYZ</Text>
+          }
+            
         </View>
       </View>
       {/* CHANGES INFO */}

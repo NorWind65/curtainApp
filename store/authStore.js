@@ -96,5 +96,32 @@ export const useAuthStore = create((set) => ({
             console.error('Error logging out:', error);
         }
     },
-    
+    addDevice: async(deviceId, password, token) => {
+         set({ isLoading: true });
+        try {
+            const response = await fetch('https://back-endcurtainapp.onrender.com/api/user/addDevice', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    deviceId,
+                    password
+                }),
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.message || 'Something went wrong!');
+            }
+            
+            set({ isLoading: false });
+            
+            return {success: true };
+        }
+        catch (error) {
+            set({ isLoading: false });
+            return { success: false, error: error.message };
+        }
+    }
 }));
