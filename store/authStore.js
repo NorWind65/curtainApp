@@ -123,7 +123,7 @@ export const useAuthStore = create((set) => ({
             set({ isLoading: false });
             return { success: false, error: error.message };
         }
-    }
+    },
 
     sendCMD: async(deviceId, cmd, token) => {
         set({ isLoading: true });
@@ -152,7 +152,7 @@ export const useAuthStore = create((set) => ({
             set({ isLoading: false });
             return { success: false, error: error.message };
         }
-    }
+    },
 
     updateTimeOC: async(deviceId, timeOC, token) => {
         set({ isLoading: true });

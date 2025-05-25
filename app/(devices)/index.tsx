@@ -79,8 +79,6 @@ export default function DeviceRemote() {
 
     const handleAutoMode = () => {};
   
-    const  handleResetDevice = () => {};
-
     const  handleDeleteDevice = () => {};
 
     return (
@@ -258,7 +256,7 @@ export default function DeviceRemote() {
                             </View>
                         </View>                       
                         {/* RESET BUTTON */}   
-                        <TouchableOpacity
+                        {/* <TouchableOpacity
                             style = {styles.button}
                             onPress = {handleResetDevice}
                             disabled = {!!isLoading}  >
@@ -266,8 +264,8 @@ export default function DeviceRemote() {
                                 <ActivityIndicator  color = "#fff" />
                             ) : (
                                 <Text style = {styles.buttonText}>RESET DEVICE</Text>
-                            )}
-                        </TouchableOpacity>
+                            )} 
+                        </TouchableOpacity>*/}
                         {/* DELETE BUTTON */}   
                         <TouchableOpacity
                             style = {styles.button}

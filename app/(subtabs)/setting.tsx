@@ -6,27 +6,26 @@ import { Ionicons } from "@expo/vector-icons";
 import styles from "../../assets/styles/device.styles"
 import COLORS from './../../constants/colors';
 import { Link } from 'expo-router';
-import { useRouter } from "expo-router";
+import { useRouter , useLocalSearchParams} from "expo-router";
 import {useAuthStore} from "../../store/authStore"
 
 export default function setting() {
-    const [deviceID, setDeviceID] = useState("");
-    const [deviceName, setDeviceName] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const { user, token, sendCMD, updateTimeOC } = useAuthStore();
 
+    const {deviceId} = useLocalSearchParams();
     const router = useRouter();
 
     const handleUpButton = () => {
-        sendCMD(deviceID, 'U', token);
+        sendCMD(deviceId, 'U', token);
     };
 
     const handleStopButton = () => {
-        sendCMD(deviceID, 'S', token);
+        sendCMD(deviceId, 'S', token);
     };
 
     const handleDownButton = () => {
-        sendCMD(deviceID, 'D', token);
+        sendCMD(deviceId, 'D', token);
     };
 
     const handleConfirmDevice = () => {};
@@ -51,7 +50,7 @@ export default function setting() {
                         <Text style = {styles.label}>Open and Close fully your devices with below buttons 3 or more times</Text>
                         {/* UP BUTTON */}
                         <TouchableOpacity 
-                        onPress={() => {}}
+                        onPress={handleUpButton}
                         style={styles.settingButton}>
                             <Ionicons 
                                 name="arrow-up-circle" 
@@ -62,7 +61,7 @@ export default function setting() {
 
                         {/* STOP BUTTON */}
                         <TouchableOpacity 
-                        onPress={() => {}}
+                        onPress={handleStopButton}
                         style={styles.settingButton}>
                             <Ionicons 
                                 name="stop-circle" 
@@ -73,7 +72,7 @@ export default function setting() {
 
                         {/* DOWN BUTTON */}
                         <TouchableOpacity 
-                        onPress={() => {}}
+                        onPress={handleDownButton}
                         style={styles.settingButton}>
                             <Ionicons 
                                 name = "arrow-down-circle" 
@@ -82,7 +81,6 @@ export default function setting() {
                             />
                         </TouchableOpacity>
 
-                        
                         {/* SAVE BUTTON */}
                         <TouchableOpacity
                             style = {styles.button}
