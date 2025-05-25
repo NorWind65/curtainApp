@@ -124,4 +124,62 @@ export const useAuthStore = create((set) => ({
             return { success: false, error: error.message };
         }
     }
+
+    sendCMD: async(deviceId, cmd, token) => {
+        set({ isLoading: true });
+        try {
+            const response = await fetch('https://back-endcurtainapp.onrender.com/api/user/sendCmd', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    deviceId,
+                    cmd
+                }),
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.message || 'Something went wrong!');
+            }
+            
+            set({ isLoading: false });
+            
+            return {success: true };
+        }
+        catch (error) {
+            set({ isLoading: false });
+            return { success: false, error: error.message };
+        }
+    }
+
+    updateTimeOC: async(deviceId, timeOC, token) => {
+        set({ isLoading: true });
+        try {
+            const response = await fetch('https://back-endcurtainapp.onrender.com/api/user/updateTimeOC', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    deviceId,
+                    timeOC
+                }),
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.message || 'Something went wrong!');
+            }
+            
+            set({ isLoading: false });
+            
+            return {success: true };
+        }
+        catch (error) {
+            set({ isLoading: false });
+            return { success: false, error: error.message };
+        }
+    }
 }));

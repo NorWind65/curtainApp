@@ -1,26 +1,34 @@
 import { View, Text, Image , TextInput, Platform, Pressable, Button, 
     TouchableOpacity, ActivityIndicator, KeyboardAvoidingView } from 'react-native'
-  import React from 'react'
-  import { useState, useEffect } from "react";
-  import { Ionicons } from "@expo/vector-icons";
-  import styles from "../../assets/styles/device.styles"
-  import COLORS from './../../constants/colors';
-  import { Link } from 'expo-router';
-  import { useRouter } from "expo-router";
+import React from 'react'
+import { useState, useEffect } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import styles from "../../assets/styles/device.styles"
+import COLORS from './../../constants/colors';
+import { Link } from 'expo-router';
+import { useRouter } from "expo-router";
+import {useAuthStore} from "../../store/authStore"
 
 export default function setting() {
     const [deviceID, setDeviceID] = useState("");
     const [deviceName, setDeviceName] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    
+    const { user, token, sendCMD, updateTimeOC } = useAuthStore();
+
     const router = useRouter();
 
-    const handleUpButton = () => {};
-    
-    const handleStopButton = () => {};
+    const handleUpButton = () => {
+        sendCMD(deviceID, 'U', token);
+    };
 
-    const handleDownButton = () => {};
-    
+    const handleStopButton = () => {
+        sendCMD(deviceID, 'S', token);
+    };
+
+    const handleDownButton = () => {
+        sendCMD(deviceID, 'D', token);
+    };
+
     const handleConfirmDevice = () => {};
 
 
