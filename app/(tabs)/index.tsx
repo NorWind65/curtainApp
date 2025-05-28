@@ -13,6 +13,9 @@ export default function home() {
     const [refreshing, setRefreshing] = useState(false);
 
     const {token} = useAuthStore();
+
+    const segments = useSegments();
+
     const fetchDevices = async (refresh = false) => {
         try {
           if(refresh) setRefreshing(true);
@@ -37,18 +40,19 @@ export default function home() {
 
     useEffect( () =>{
       fetchDevices();
-    },[])
+    },[segments])
+  
   const statusImage = (light) => {
     if(light < 10){
-        return require("../../assets/images/moon-i-2.png")
+        return require("../../assets/images/v-bright.png")
     }else if(light < 200){
-        return require("../../assets/images/clouds.png")
+        return require("../../assets/images/bright.png")
     }else if(light < 500){
       return require("../../assets/images/day.png")
     }else if(light < 800) {
-      return require("../../assets/images/bright.png")
+      return require( "../../assets/images/clouds.png")
     }else{
-      return require("../../assets/images/v-bright.png")
+      return require( "../../assets/images/moon-i-2.png")
     }
   }
   const state = (percent) =>{
@@ -56,7 +60,7 @@ export default function home() {
           return "Close"
       }else if(percent < 40){
           return "Small Open"
-      }else if(percent < 70){
+      }else if(percent < 80){
           return "Half Open"
       }else{
           return "Full Open"
@@ -64,20 +68,20 @@ export default function home() {
   }
   const weather = (light) => {
     if(light < 10){
-        return "Night"
+        return "Very Bright Weather"
     }else if(light < 200){
-        return "Dim Weather"
+        return "Sunny Weather"
     }else if(light < 500){
       return "Normal Weather"
     }else if(light < 800) {
-      return "Sunny Weather"
+      return "Dim Weather"
     }else{
-      return "Very Bright Weather"
+      return "Night"
     }
   }
   const renderItem = ({ item }) => (
     <Link
-        href={{ pathname: "/(devices)", params: { deviceId: item._id } }}
+        href={{ pathname: "/(devices)", params: { deviceId: item.deviceId } }}
         asChild
     >
       <TouchableOpacity>
@@ -91,7 +95,7 @@ export default function home() {
             <View style={styles.deviceDetails}>
                 <Text >Status: {state(item.percent)} - Open percent: {item.percent}%</Text>
                 <Text >Weather: {weather(item.light)}</Text>
-                <Text >Light: {item.light}</Text> 
+                {/* <Text >Light: {item.light}</Text>  */}
             </View>
         </View>
       </TouchableOpacity>

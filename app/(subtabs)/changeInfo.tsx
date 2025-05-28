@@ -1,4 +1,4 @@
-import { View, Text, Image , TextInput, Platform,
+import { View, Text, Image , TextInput, Platform, Alert,
   TouchableOpacity, ActivityIndicator, KeyboardAvoidingView } from 'react-native'
 import React from 'react'
 import { useState, useEffect } from "react";
@@ -7,23 +7,33 @@ import styles from "../../assets/styles/signup.styles"
 import COLORS from './../../constants/colors';
 import { Link } from 'expo-router';
 import { useRouter } from "expo-router";
-import {useAuthStore} from '../../store/authStore'
+import { useAuthStore } from "../../store/authStore";
 export default function changeInfo() { 
     
-    const {user, token} = useAuthStore();
+    const {user, token , updateInfo, isLoading} = useAuthStore();
     
     const [username, setUsername] = useState(user?.username||"");
     const [email, setEmail] = useState(user?.email||"");
     const [oldPassword, setOldpassword] = useState("");
     const [newPassword, setNewpassword] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
+   
     const [showPassword, setShowPassword] = useState(false);
    
-    
-   
-
     const router = useRouter();
 
+    const handleConfirmChangeInfo = async () => {
+        //console.log(username, email, isLoading);
+        const result = await updateInfo( username, email, newPassword, oldPassword, token );
+        console.log(result);
+        if(result.success){
+            Alert.alert("Success", "Your information has been updated successfully");
+            router.push("/(tabs)/profile");
+        }
+        else{
+            Alert.alert("Error", result.error || "An error occurred while updating your information");
+        }
+    }
+   
     return (
         <KeyboardAvoidingView
         style = {{flex: 1}}
@@ -146,7 +156,7 @@ export default function changeInfo() {
                         {/* Confirm BUTTON */}   
                         <TouchableOpacity
                             style = {styles.button}
-                            onPress = {() => router.push("/(tabs)/profile")}
+                            onPress = {handleConfirmChangeInfo}
                             disabled = {!!isLoading}  >
                             {isLoading ? (
                                 <ActivityIndicator  color = "#fff" />

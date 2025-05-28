@@ -55,7 +55,7 @@ export default function Login() {
                   placeholderTextColor = {COLORS.placeholderText}
                   value = {email}
                   onChangeText = {setEmail}
-                  keybroadType = "email-address"
+                  keyboardType = "email-address"
                   autoCapitalize = "none"
                 />
               </View>

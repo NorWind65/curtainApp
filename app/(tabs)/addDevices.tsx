@@ -24,7 +24,7 @@ export default function addDevices() {
             Alert.alert("Error", result.error)
         }
         else {
-            router.push({pathname:"/(subtabs)/setting", params: {deviceId: deviceId} });
+            router.push({pathname:"/(devices)", params: {deviceId: deviceId} });
         }
 
         

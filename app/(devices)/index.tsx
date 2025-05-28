@@ -1,4 +1,4 @@
-import { View, Text, Image , TextInput, Platform, Pressable, Button, 
+import { View, Text, Image , TextInput, Platform, Pressable, Button, Alert, 
   TouchableOpacity, ActivityIndicator, KeyboardAvoidingView } from 'react-native'
 import React from 'react'
 import { useState, useEffect } from "react";
@@ -16,7 +16,7 @@ export default function DeviceRemote() {
     const [deviceName, setdeviceName] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [sliderState ,setSliderState] = useState(0);
-     
+    
     const [openTime,setOpenTime] =useState(new Date())
     const [isOpenTime,setIsOpenTime] =useState(false)
 
@@ -25,12 +25,12 @@ export default function DeviceRemote() {
 
     const [showPicker, setShowPicker] = useState(false);
 
-    const[isAutoMode,setIsAutoMode] = useState(false);
+    const[autoMode,setAutoMode] = useState(false);
 
     const {deviceId} = useLocalSearchParams();
  
     const router = useRouter();
-    const {token} = useAuthStore();
+    const {token , user} = useAuthStore();
 
 
     const fetchDeviceID = async () => {
@@ -44,10 +44,25 @@ export default function DeviceRemote() {
             })
             const data = await response.json();
             if(!response.ok) throw new Error(data.message|| "Failed to fetch Device");
-
-            setDevice(data);
-            setdeviceName(data?.deviceName)
-            setSliderState(data?.percent);
+            await setdeviceName(data?.deviceName)
+            await setSliderState(data?.percent);
+            await setIsCloseTime(data?.isCloseTime);
+            await setIsOpenTime(data?.isOpenTime);
+            await setAutoMode(data?.autoMode);
+            if(data?.OpenTime) {    
+                const openTime = new Date();
+                openTime.setHours(data?.OpenTime?.h);
+                openTime.setMinutes(data?.OpenTime?.m);
+                await setOpenTime(openTime);
+            }
+            if(data?.CloseTime) {
+                const closeTime = new Date();
+                closeTime.setHours(data?.CloseTime?.h);
+                closeTime.setMinutes(data?.CloseTime?.m);
+                await setCloseTime(closeTime);
+            }
+           
+            
         } catch (error) {
             console.log("Error fetching Device", error);
         } finally{
@@ -59,27 +74,243 @@ export default function DeviceRemote() {
         fetchDeviceID();
     },[deviceId])
 
+    const handleupdateDeviceName = async () => {
+       
+        try {
+            setIsLoading(true);
+            const response = await fetch(`https://back-endcurtainapp.onrender.com/api/user/updateDeviceName`,{
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    deviceId,
+                    deviceName
+                })
+            });
+            const data = await response.json();
+            if(!response.ok) throw new Error(data.message|| "Failed to update Device Name");
+            console.log("Device Name updated successfully");
+        } catch (error) {
+            console.log("Error updating Device Name", error);
+        } finally{
+            setIsLoading(false);
+        }
+    };
+
+    const handleupdatePercent = async () => {
+        console.log("Slider Value", parseInt(sliderState));
+        const percent = parseInt(sliderState);
+        try {   
+            setIsLoading(true);
+            const response = await fetch(`https://back-endcurtainapp.onrender.com/api/device/updatePercent/?deviceId=${deviceId}`,{
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    percent
+                })
+            });
+            const data = await response.json();
+            if(!response.ok) throw new Error(data.message|| "Failed to update Percent");
+            console.log("Percent updated successfully");  
+            setSliderState(percent);
+        } catch (error) {
+            console.log("Error updating Percent", error);
+           
+        }finally{
+            setIsLoading(false);
+        }
+    };
 
     const toggleDatePicker = () => {
         setShowPicker(!showPicker);
     };
 
-    const onChangeOpenTime = (e, selectedTime) => {
+    const onChangeOpenTime = async (e, selectedTime) => {
         setOpenTime(selectedTime);
-        
-    }
-    const handleOpenTime = () => {};
+        try {   
+            setIsLoading(true);
+            const response = await fetch(`https://back-endcurtainapp.onrender.com/api/device/updateOpenTime/?deviceId=${deviceId}`,{
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    isOpenTime,
+                    openTime: {
+                        h: selectedTime.getHours(),
+                        m: selectedTime.getMinutes()
+                    }
+                })
+            });
+            const data = await response.json();
+            if(!response.ok) throw new Error(data.message|| "Failed to update Open Time");
+            console.log("Open Time updated successfully");
+            setOpenTime(selectedTime);
+        } catch (error) {
+            console.log("Error updating Open Time", error);
 
-    const onChangeCloseTime = (e, selectedTime) => {
+        }finally{
+            setIsLoading(false);
+        }
+    }
+
+    const handleOpenTime =async () => {
+        console.log("Open Time", openTime.getHours(), openTime.getMinutes());
+        try {   
+            setIsLoading(true);
+            const response = await fetch(`https://back-endcurtainapp.onrender.com/api/device/updateOpenTime/?deviceId=${deviceId}`,{
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    isOpenTime : !isOpenTime,
+                    openTime: {
+                        h: openTime.getHours(),
+                        m: openTime.getMinutes()
+                    }
+                })
+            });
+            const data = await response.json();
+            if(!response.ok) throw new Error(data.message|| "Failed to update Open Time");
+            console.log("Open Time updated successfully");
+        } catch (error) {
+            console.log("Error updating Open Time", error);
+        } finally{
+            setIsLoading(false);
+        }
+        setIsOpenTime(!isOpenTime);
+
+    };
+
+    const onChangeCloseTime = async (e, selectedTime) => {
         setCloseTime(selectedTime);
+        try {   
+            setIsLoading(true);
+            const response = await fetch(`https://back-endcurtainapp.onrender.com/api/device/updateCloseTime/?deviceId=${deviceId}`,{
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    isCloseTime,
+                    closeTime: {
+                        h: selectedTime.getHours(),
+                        m: selectedTime.getMinutes()
+                    }
+                })
+            });
+            const data = await response.json();
+            if(!response.ok) throw new Error(data.message|| "Failed to update Close Time");
+            console.log("Close Time updated successfully");
+            setCloseTime(selectedTime);
+        } catch (error) {
+            console.log("Error updating Close Time", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleCloseTime = async () => {
+        console.log("Close Time", closeTime.getHours(), closeTime.getMinutes());
+        try {   
+            setIsLoading(true);
+            const response = await fetch(`https://back-endcurtainapp.onrender.com/api/device/updateCloseTime/?deviceId=${deviceId}`,{
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    isCloseTime : !isCloseTime,
+                    closeTime: {
+                        h: closeTime.getHours(),
+                        m: closeTime.getMinutes()
+                    }
+                })
+            });
+            const data = await response.json();
+            if(!response.ok) throw new Error(data.message|| "Failed to update Close Time");
+            console.log("Close Time updated successfully");
+        } catch (error) {
+            console.log("Error updating Close Time", error);
+        } finally{
+            setIsLoading(false);
+        }   
+        setIsCloseTime(!isCloseTime);
+    };
+
+    const handleAutoMode = async () => {  
+        console.log("Auto Mode", autoMode);
+        try {
+            setIsLoading(true);
+            const response = await fetch(`https://back-endcurtainapp.onrender.com/api/device/updateAutoMode/?deviceId=${deviceId}`,{
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    autoMode: !autoMode
+                })
+            });
+            const data = await response.json();
+            if(!response.ok) throw new Error(data.message|| "Failed to update Auto Mode");
+            console.log("Auto Mode updated successfully");
+            setAutoMode(!autoMode);
+        } catch (error) {
+            console.log("Error updating Auto Mode", error);
+        } finally{
+            setIsLoading(false);
+        }
+        setAutoMode(!autoMode);
+        // console.log("Auto Mode", autoMode);
         
+    };
+
+    const confirmRemoveDevice = () => {
+    Alert.alert(
+      "Remove Device",
+      "Are you sure you want to remove this device?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        { text: "Remove", onPress: () => handleRemoveDevice(), style: "destructive" }
+      ]
+    );
+  }
+    const  handleRemoveDevice = async () => {
+       try {
+            setIsLoading(true);
+            const response = await fetch(`https://back-endcurtainapp.onrender.com/api/user/removeDevice/`,{
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    deviceId
+                })
+            });
+            const data = await response.json();
+            if(!response.ok) throw new Error(data.message|| "Failed to remove Device");
+            console.log("Remove Device successfully");
+    } catch (error) {
+        console.log("Error removing Device", error);
+       }finally {
+            setIsLoading(false);
+            router.push("/(tabs)/");
+       }
+        
+    };
+
+    const handleBackToHome = () => {
+        router.push("/(tabs)/");
     }
-
-    const handleCloseTime = () => {};
-
-    const handleAutoMode = () => {};
-  
-    const  handleDeleteDevice = () => {};
 
     return (
         <KeyboardAvoidingView
@@ -110,6 +341,7 @@ export default function DeviceRemote() {
                                 />
                                 <TouchableOpacity
                                     style = {styles.eyeIcons}
+                                    onPress ={handleupdateDeviceName}
                                     >
                                     <Ionicons 
                                         name= "checkmark-circle-outline" 
@@ -142,7 +374,9 @@ export default function DeviceRemote() {
                             style = {[ styles.button, 
                                    { height: 30,
                                     width: 120,}]}
-                            disabled = {!!isLoading}  >
+                            disabled = {!!isLoading}  
+                            onPress = {handleupdatePercent}
+                            >
                             {isLoading ? (
                                 <ActivityIndicator  color = "#fff" />
                             ) : (
@@ -158,15 +392,13 @@ export default function DeviceRemote() {
                                         <DateTimePicker
                                             mode = 'time'
                                             value = {openTime}
-                                            onchange = {onChangeOpenTime}
+                                            onChange = {onChangeOpenTime}
                                             is24Hour = {true}
                                             style = {[styles.input,backgroundColor = "#fff"]}
                                         />
                                         <TouchableOpacity
                                             style = {{paddingLeft: 120}}
-                                            onPress={(() => {
-                                                handleOpenTime,
-                                                setIsOpenTime(!isOpenTime)})}
+                                            onPress={handleOpenTime}
                                             >
                                             {isOpenTime ? 
                                             <Ionicons 
@@ -193,15 +425,13 @@ export default function DeviceRemote() {
                                         <DateTimePicker
                                             mode = 'time'
                                             value = {closeTime}
-                                            onchange = {onChangeCloseTime}
+                                            onChange = {onChangeCloseTime}
                                             is24Hour = {true}
                                             style = {[styles.input,backgroundColor = "#fff"]}
                                         />
                                         <TouchableOpacity
                                             style = {{paddingLeft: 120}}
-                                            onPress={(() => {
-                                                handleCloseTime,
-                                                setIsCloseTime(!isCloseTime)})}
+                                            onPress={handleCloseTime}
                                             >
                                             {isCloseTime ? 
                                             <Ionicons 
@@ -236,11 +466,9 @@ export default function DeviceRemote() {
                                 </Text>
                                 <TouchableOpacity
                                             style = {{paddingLeft: 100}}
-                                            onPress={(() => {
-                                                handleAutoMode,
-                                                setIsAutoMode(!isAutoMode)})}
+                                            onPress={handleAutoMode}
                                             >
-                                            {isAutoMode ? 
+                                            {autoMode ? 
                                             <Ionicons 
                                                 name= "checkmark-circle" 
                                                 size = {40}
@@ -255,26 +483,26 @@ export default function DeviceRemote() {
                                 </TouchableOpacity>
                             </View>
                         </View>                       
-                        {/* RESET BUTTON */}   
-                        {/* <TouchableOpacity
-                            style = {styles.button}
-                            onPress = {handleResetDevice}
-                            disabled = {!!isLoading}  >
-                            {isLoading ? (
-                                <ActivityIndicator  color = "#fff" />
-                            ) : (
-                                <Text style = {styles.buttonText}>RESET DEVICE</Text>
-                            )} 
-                        </TouchableOpacity>*/}
-                        {/* DELETE BUTTON */}   
+                        {/* HOME BUTTON */}   
                         <TouchableOpacity
                             style = {styles.button}
-                            onPress = {handleDeleteDevice}
+                            onPress = {handleBackToHome}
                             disabled = {!!isLoading}  >
                             {isLoading ? (
                                 <ActivityIndicator  color = "#fff" />
                             ) : (
-                                <Text style = {styles.buttonText}>DELETE DEVICE</Text>
+                                <Text style = {styles.buttonText}>HOME PAGE 🏠︎</Text>
+                            )} 
+                        </TouchableOpacity>
+                        {/* Remove BUTTON */}   
+                        <TouchableOpacity
+                            style = {styles.button}
+                            onPress = {confirmRemoveDevice}
+                            disabled = {!!isLoading}  >
+                            {isLoading ? (
+                                <ActivityIndicator  color = "#fff" />
+                            ) : (
+                                <Text style = {styles.buttonText}>REMOVE DEVICE ❌ </Text>
                             )}
                         </TouchableOpacity>
                     

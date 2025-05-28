@@ -13,6 +13,37 @@ export const useAuthStore = create((set) => ({
             console.error('Error clearing storage:', error);
         }
     },
+
+    updateInfo: async (newUserName, newEmail, newPassword, oldPassword, token) => {
+        set({ isLoading: true });
+        try {
+            const response = await fetch("https://back-endcurtainapp.onrender.com/api/user/updateInfo",{
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    newUserName,
+                    newEmail,
+                    oldPassword,
+                    newPassword
+                })
+            });
+            const data = await response.json();
+            if(!response.ok) throw new Error(data.message || "Failed to change info");
+            await AsyncStorage.removeItem('user');
+            await AsyncStorage.setItem('user', JSON.stringify(data.user));
+
+            set({ user: data.user, isLoading: false });
+            return { success: true };
+        } catch (error) {
+            set({ isLoading: false });
+            return { success: false, error: error.message };
+        } 
+    },
+
+
     signup: async (username, email, password) => {
         set({ isLoading: true });
         try {
