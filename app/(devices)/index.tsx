@@ -1,4 +1,4 @@
-import { View, Text, Image , TextInput, Platform, Pressable, Button, Alert, 
+import { View, Text, Image , TextInput, Platform, Pressable, Button, Alert, ScrollView,
   TouchableOpacity, ActivityIndicator, KeyboardAvoidingView } from 'react-native'
 import React from 'react'
 import { useState, useEffect } from "react";
@@ -14,6 +14,7 @@ import {useAuthStore} from "../../store/authStore"
 export default function DeviceRemote() {
     const [device, setDevice] = useState(null);
     const [deviceName, setdeviceName] = useState("");
+    const [curtainLength, setCurtainLength] = useState(parseFloat(0.0));
     const [isLoading, setIsLoading] = useState(false);
     const [sliderState ,setSliderState] = useState(0);
     
@@ -49,7 +50,9 @@ export default function DeviceRemote() {
             await setIsCloseTime(data?.isCloseTime);
             await setIsOpenTime(data?.isOpenTime);
             await setAutoMode(data?.autoMode);
-            if(data?.OpenTime) {    
+            await setCurtainLength( parseFloat(data?.timeOC / 155) );
+            console.log(curtainLength);
+            if(data?.OpenTime) {
                 const openTime = new Date();
                 openTime.setHours(data?.OpenTime?.h);
                 openTime.setMinutes(data?.OpenTime?.m);
@@ -72,6 +75,7 @@ export default function DeviceRemote() {
 
     useEffect(()=>{
         fetchDeviceID();
+        
     },[deviceId])
 
     const handleupdateDeviceName = async () => {
@@ -269,20 +273,40 @@ export default function DeviceRemote() {
         // console.log("Auto Mode", autoMode);
         
     };
-
+    const handleupdateCurtainLength = async () => {
+        try {
+            setIsLoading(true);
+            const response = await fetch(`https://back-endcurtainapp.onrender.com/api/device/updateTimeOC/?deviceId=${deviceId}`,{
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    Length: parseInt(curtainLength)
+                })
+            });
+            const data = await response.json();
+            if(!response.ok) throw new Error(data.message|| "Failed to update Curtain Length");
+            console.log("Curtain Length updated successfully");
+        } catch (error) {
+            console.log("Error updating Curtain Length", error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
     const confirmRemoveDevice = () => {
-    Alert.alert(
-      "Remove Device",
-      "Are you sure you want to remove this device?",
-      [
-        {
-          text: "Cancel",
-          style: "cancel"
-        },
-        { text: "Remove", onPress: () => handleRemoveDevice(), style: "destructive" }
-      ]
-    );
-  }
+        Alert.alert(
+        "Remove Device",
+        "Are you sure you want to remove this device?",
+        [
+            {
+            text: "Cancel",
+            style: "cancel"
+            },
+            { text: "Remove", onPress: () => handleRemoveDevice(), style: "destructive" }
+        ]
+        );
+    }
     const  handleRemoveDevice = async () => {
        try {
             setIsLoading(true);
@@ -299,15 +323,13 @@ export default function DeviceRemote() {
             const data = await response.json();
             if(!response.ok) throw new Error(data.message|| "Failed to remove Device");
             console.log("Remove Device successfully");
-    } catch (error) {
-        console.log("Error removing Device", error);
-       }finally {
-            setIsLoading(false);
-            router.push("/(tabs)/");
-       }
-        
+        } catch (error) {
+            console.log("Error removing Device", error);
+        }finally {
+                setIsLoading(false);
+                router.push("/(tabs)/");
+        }
     };
-
     const handleBackToHome = () => {
         router.push("/(tabs)/");
     }
@@ -317,6 +339,7 @@ export default function DeviceRemote() {
         style = {{flex: 1}}
         behavior = {Platform.OS === "ios" ? "padding" : "height"}
         >
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
             <View style = {styles.container}>
                 <View style ={styles.card}>
                     {/* HEADER */}
@@ -342,6 +365,29 @@ export default function DeviceRemote() {
                                 <TouchableOpacity
                                     style = {styles.eyeIcons}
                                     onPress ={handleupdateDeviceName}
+                                    >
+                                    <Ionicons 
+                                        name= "checkmark-circle-outline" 
+                                        size = {20}
+                                        color = {COLORS.primary}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        {/* DEVICE LENGTH INPUT */}
+                        <View style = {styles.inputGroup}>
+                            <Text style = {styles.label}>Curtain Length (cm)</Text>
+                            <View style = {styles.inputContainer}>
+                                <TextInput 
+                                style = {styles.input}
+                                value = {curtainLength.toString()}
+                                onChangeText = {setCurtainLength}
+                                autoCapitalize = "none"
+                                keyboardType = "numeric"
+                                />
+                                <TouchableOpacity
+                                    style = {styles.eyeIcons}
+                                    onPress ={handleupdateCurtainLength}
                                     >
                                     <Ionicons 
                                         name= "checkmark-circle-outline" 
@@ -509,6 +555,8 @@ export default function DeviceRemote() {
                 </View>
             </View>
         </View>
+        </ScrollView>
+
     </KeyboardAvoidingView>
 )
 }
